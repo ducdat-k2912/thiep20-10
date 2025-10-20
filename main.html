@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thiệp 20/10 - Viết và tải thiệp đẹp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700;900&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #ff5c8a;
+      --shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg, linear-gradient(135deg,#FFDEE9 0%,#B5FFFC 100%));
+      background-size: cover;
+      background-position: center;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .card {
+      width: 600px;
+      min-height: 360px;
+      background: linear-gradient(135deg,#FF9A9E 0%,#FAD0C4 50%,#FFD1FF 100%);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .card h1 {
+      font-family: 'Dancing Script', cursive;
+      color: #fff;
+      font-size: 40px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      margin: 0 0 10px 0;
+    }
+
+    .card .subtitle {
+      color: rgba(255,255,255,0.9);
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+
+    .message {
+      color: #fff;
+      background: rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 15px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .signature {
+      text-align: right;
+      margin-top: 16px;
+      color: rgba(255,255,255,0.95);
+    }
+    .signature strong {
+      display: block;
+      font-size: 18px;
+    }
+
+    .controls {
+      margin-top: 24px;
+      background: rgba(255,255,255,0.9);
+      padding: 20px;
+      border-radius: 16px;
+      width: 600px;
+      box-shadow: var(--shadow);
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 14px;
+      resize: vertical;
+    }
+
+    button {
+      background: linear-gradient(90deg,#ff6b8a,#ff9fb1);
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    input[type="file"] {
+      margin-top: 10px;
+    }
+
+    @media (max-width:650px){
+      .card,.controls{width:100%;}
+    }
+  </style>
+</head>
+<body>
+  <div id="card" class="card">
+    <div>
+      <h1 id="titlePreview">Chúc Mừng 20/10</h1>
+      <div class="subtitle">Ngày Phụ Nữ Việt Nam</div>
+      <div class="message" id="messagePreview">
+Kính chúc các chị, các cô luôn mạnh khỏe, hạnh phúc và luôn xinh đẹp.
+Cảm ơn vì đã làm cho cuộc sống này màu sắc hơn!
+      </div>
+    </div>
+    <div class="signature">
+      <div>Thân mến,</div>
+      <strong id="sigPreview">Người gửi</strong>
+    </div>
+  </div>
+
+  <div class="controls">
+    <label>Tiêu đề</label>
+    <input id="titleInput" type="text" value="Chúc Mừng 20/10">
+
+    <label>Nội dung thiệp</label>
+    <textarea id="messageInput">Kính chúc các chị, các cô luôn mạnh khỏe, hạnh phúc và luôn xinh đẹp.
+Cảm ơn vì đã làm cho cuộc sống này màu sắc hơn!</textarea>
+
+    <label>Người gửi</label>
+    <input id="sigInput" type="text" value="Người gửi">
+
+
+    <button id="downloadBtn">Tải thiệp</button>
+  </div>
+
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>
+    const titleInput = document.getElementById('titleInput');
+    const messageInput = document.getElementById('messageInput');
+    const sigInput = document.getElementById('sigInput');
+    const titlePreview = document.getElementById('titlePreview');
+    const messagePreview = document.getElementById('messagePreview');
+    const sigPreview = document.getElementById('sigPreview');
+    const bgUpload = document.getElementById('bgUpload');
+
+    titleInput.addEventListener('input', () => titlePreview.textContent = titleInput.value);
+    messageInput.addEventListener('input', () => messagePreview.textContent = messageInput.value);
+    sigInput.addEventListener('input', () => sigPreview.textContent = sigInput.value);
+
+    bgUpload.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        document.body.style.backgroundImage = `url('${ev.target.result}')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    async function downloadCard() {
+      const card = document.getElementById('card');
+      const rect = card.getBoundingClientRect();
+      const scale = 4; // độ phân giải cao
+      const canvas = await html2canvas(card, {
+        scale,
+        useCORS: true,
+        backgroundColor: null,
+        logging: false,
+        width: rect.width,
+        height: rect.height
+      });
+
+      const link = document.createElement('a');
+      link.download = 'thiep_20_10.png';
+      link.href = canvas.toDataURL('image/png', 1.0);
+      link.click();
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', downloadCard);
+  </script>
+</body>
+</html>
